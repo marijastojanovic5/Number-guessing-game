@@ -2,7 +2,7 @@
     //game values
     let min =1,
           max=10,
-          winningNum=2,
+          winningNum=getNum(min,max),
           guessesLeft=3;
 
     //UI elements
@@ -16,26 +16,61 @@
     //assign min and max
     minNum.textContent=min;
     maxNum.textContent=max;
+    //play again event Listener
+    game.addEventListener('mousedown',function(e){
+      if(e.target.className === 'play-again'){
+        window.location.reload();
+      }
+    });
 
     //listen for guess
     guessBtn.addEventListener('click',function(){
-      let guess=parseInt(guessInput.value);
+      let guess = parseInt(guessInput.value);
       if(isNaN(guess)||guess < min || guess> max ){
         setMessage(`Please enter number between ${min} and ${max}`,"red");
       }
       //check if won
       if(guess === winningNum){
-        guessInput.disabled = true;
-        guessInput.style.borderColor='green';
-        setMessage(`${winningNum} is correct! You win!`,'green');
+        gameOver(true,`${winningNum} is correct! You win!`);
 
       }else {
+        guessesLeft -= 1;
+        if(guessesLeft === 0){
+        gameOVer(false,`Game over, you lost! Winning number was ${winningNum}`);
+
+        }else {
+          guessInput.style.borderColor='red';
+          guessInput.value='';
+          
+          setMessage(`${guess} is not correct, ${guessesLeft} guesses left`,'red');
+
+        }
 
       }
     });
-    function setMessage(mess,color){
+    //game over
+    function gameOver(won,msg){
+      let color;
+      won === true ? color='green': color= 'red';
+        guessInput.disabled = true;
+        guessInput.style.borderColor=color;
+        message.style.color=color;
+        setMessage(msg);
+
+        //play again
+        guessBtn.value='Play Again';
+        guessBtn.className += 'play-again';
+    }
+   //get winning-random num
+    function getNum(min,max){
+      return Math.floor(Math.random()*(max-min+1)+min);
+
+
+    }
+    //set Message
+    function setMessage(msg,color){
       message.style.color=color;
-      message.textContent=mess;
+      message.textContent=msg;
     }
 
 
